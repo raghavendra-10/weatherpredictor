@@ -1,7 +1,8 @@
 """
 Variance Analysis: Compare Predicted vs Actual 2024-2025
-Calculate percentage of records with variance between -1.10 and +0.10
+Calculate percentage of records with variance between -0.10 and +0.10
 Formula: variance = (actual - predicted) / predicted
+Updated to use tighter variance range for better accuracy assessment
 """
 
 import pandas as pd
@@ -13,9 +14,9 @@ print("="*80)
 print("VARIANCE ANALYSIS: PREDICTED VS ACTUAL (2024-2025)")
 print("="*80)
 
-# Load the predictions file
+# Load the predictions file (using optimized predictions)
 print("\nLoading predictions data...")
-df = pd.read_csv('improved_predictions_2024_2025.csv')
+df = pd.read_csv('optimized_predictions_2024_2025.csv')
 
 # Weather parameters
 weather_params = ['ALLSKY_SFC_SW_DWN', 'ALLSKY_SFC_SW_DNI', 'ALLSKY_SFC_SW_DIFF',
@@ -47,8 +48,8 @@ for param in weather_params:
     # Store variance in dataframe
     df[f'{param}_VARIANCE'] = variance
 
-    # Count records within range [-1.10, +0.10]
-    in_range = ((variance >= -1.10) & (variance <= 0.10)).sum()
+    # Count records within range [-0.10, +0.10]
+    in_range = ((variance >= -0.10) & (variance <= 0.10)).sum()
     total_records = len(variance)
     percentage = (in_range / total_records) * 100
 
@@ -226,7 +227,7 @@ plt.axhline(y=overall_percentage, color='blue', linestyle='-',
 
 plt.xticks(range(len(results_df)), results_df['Parameter'], rotation=45, ha='right')
 plt.ylabel('Percentage in Range (%)', fontsize=12, fontweight='bold')
-plt.title('Percentage of Records with Variance between -1.10 and +0.10\n(Formula: (Actual - Predicted) / Predicted)',
+plt.title('Percentage of Records with Variance between -0.10 and +0.10\n(Formula: (Actual - Predicted) / Predicted)',
           fontsize=14, fontweight='bold')
 plt.legend(loc='lower right', fontsize=10)
 plt.grid(True, alpha=0.3, axis='y')
@@ -247,12 +248,12 @@ for i, param in enumerate(weather_params):
     ax.hist(variance_data, bins=50, edgecolor='black', alpha=0.7, color='skyblue')
 
     # Add vertical lines for range boundaries
-    ax.axvline(-1.10, color='red', linestyle='--', linewidth=2, label='Lower bound (-1.10)')
+    ax.axvline(-0.10, color='red', linestyle='--', linewidth=2, label='Lower bound (-0.10)')
     ax.axvline(0.10, color='red', linestyle='--', linewidth=2, label='Upper bound (+0.10)')
     ax.axvline(0, color='green', linestyle='-', linewidth=2, label='Perfect (0)', alpha=0.7)
 
     # Shade the acceptable range
-    ax.axvspan(-1.10, 0.10, alpha=0.2, color='green', label='Acceptable Range')
+    ax.axvspan(-0.10, 0.10, alpha=0.2, color='green', label='Acceptable Range')
 
     pct = results_df[results_df['Parameter'] == param]['Percentage_In_Range'].values[0]
     mean_var = results_df[results_df['Parameter'] == param]['Mean_Variance'].values[0]
@@ -282,12 +283,12 @@ for i, param in enumerate(weather_params):
     ax.plot(dates, variance_data, linewidth=1, alpha=0.6, color='blue')
 
     # Add horizontal lines for range boundaries
-    ax.axhline(-1.10, color='red', linestyle='--', linewidth=2, alpha=0.5, label='Lower bound')
+    ax.axhline(-0.10, color='red', linestyle='--', linewidth=2, alpha=0.5, label='Lower bound')
     ax.axhline(0.10, color='red', linestyle='--', linewidth=2, alpha=0.5, label='Upper bound')
     ax.axhline(0, color='green', linestyle='-', linewidth=2, alpha=0.5, label='Perfect')
 
     # Shade the acceptable range
-    ax.axhspan(-1.10, 0.10, alpha=0.1, color='green')
+    ax.axhspan(-0.10, 0.10, alpha=0.1, color='green')
 
     pct = results_df[results_df['Parameter'] == param]['Percentage_In_Range'].values[0]
 
@@ -453,7 +454,7 @@ print(f"  • Total records analyzed:     {len(df):,} days")
 print(f"  • Total data points:          {total_data_points:,}")
 print(f"  • Data points in range:       {total_in_range:,}")
 print(f"  • Overall accuracy:           {overall_percentage:.2f}%")
-print(f"\nVariance Range: -1.10 to +0.10")
+print(f"\nVariance Range: -0.10 to +0.10")
 print(f"Formula: (Actual - Predicted) / Predicted")
 
 # Best and worst performing parameters
